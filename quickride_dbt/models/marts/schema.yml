@@ -1,0 +1,78 @@
+version : 2
+
+models:
+#------------------------
+
+# Fact Tables
+
+#-------------------------
+   
+   - name: fact_trips
+     columns:
+        - name: trip_id
+          tests:
+            - not_null
+            - unique
+        
+        - name: rider_sk
+          tests:
+            - not_null
+            - relationships:
+                arguments:
+                  to : ref('dim_riders')
+                  field: rider_sk
+
+        - name: driver_sk
+          tests:
+            - not_null
+            - relationships:
+                arguments:
+                  to : ref('dim_drivers')
+                  field: driver_sk
+
+#--------------------
+# Dimension
+#--------------------
+   - name: dim_drivers
+     columns:
+        - name: driver_sk
+          tests:
+            - not_null
+            - unique
+        
+        - name : driver_id
+          tests: 
+            - not_null
+
+        - name: dbt_valid_from
+          test:
+            - not_null
+      
+     tests:  
+       - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - driver_id
+            - dbt_valid_from
+
+        
+
+   - name: dim_riders
+     columns:
+        - name: rider_sk
+          tests:
+            - not_null
+            - unique
+        
+        - name : rider_id
+          tests:
+            - not_null
+    
+     tests:  
+       - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - rider_id
+            - dbt_valid_from
+
+
+
+          

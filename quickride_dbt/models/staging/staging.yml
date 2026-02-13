@@ -1,0 +1,93 @@
+version : 2
+
+models:
+
+  - name: stg_trips
+    description: clean and deduplicated
+    columns:
+      - name: trip_id
+        tests:
+          - not_null
+          - unique
+      - name: rider_id
+        tests:
+          - relationships:
+              to: ref('stg_riders')
+              field: rider_id
+
+      - name: driver_id
+        tests:
+          - relationships:
+                 to: ref('stg_drivers')
+                 field: driver_id
+      
+      - name: surge_multiplier
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+               arguments:
+                  min_value: 1
+                  max_value: 5
+      
+      - name: trip_duration_min
+        description: numeric
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+               arguments:
+                  min_value: 1
+                  max_value: 600
+      
+      - name: total_fare
+        test:
+          -dbt_expectations.expect_column_values_to_be_between:
+             arguments:
+                min_value: 0
+      
+      - name: fare_amount
+        test:
+          -dbt_expectations.expect_column_values_to_be_between:
+             arguments:
+                min_value: 0
+        
+      
+
+       
+  
+  - name: stg_drivers
+    columns:
+      - name: driver_id
+        tests:
+          - not_null
+          - unique
+      
+      - name: rating
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+               arguments:
+                  min_value: 0
+                  max_value: 5
+
+  - name: stg_riders
+    columns:
+      - name: rider_id
+        tests:
+          - not_null
+          - unique
+      
+      - name: rating
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+               arguments:
+                  min_value: 0
+                  max_value: 5
+
+
+
+       
+
+
+  
+
+
+
+
+    
