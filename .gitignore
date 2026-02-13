@@ -1,0 +1,99 @@
+# ------------------------------
+# Python
+# ------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+*.pyo
+
+# Virtual Environments
+venv/
+.env/
+.envrc
+.venv/
+
+# ------------------------------
+# Environment Variables (IMPORTANT)
+# ------------------------------
+.env
+.env.*
+profiles.yml
+
+# ------------------------------
+# dbt
+# ------------------------------
+target/
+dbt_packages/
+logs/
+dbt_modules/
+manifest.json
+run_results.json
+
+# ------------------------------
+# Airflow
+# ------------------------------
+airflow.cfg
+airflow.db
+airflow-webserver.pid
+logs/
+*.log
+*.pid
+
+# ------------------------------
+# Docker
+# ------------------------------
+*.env
+*.sqlite
+*.db
+docker-compose.override.yml
+**/postgres-data/
+**/pgdata/
+**/airflow_logs/
+
+# ------------------------------
+# Snowflake / Credentials
+# ------------------------------
+*.pem
+*.key
+*.crt
+*.p8
+
+# ------------------------------
+# IDE / Editor
+# ------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ------------------------------
+# OS Files
+# ------------------------------
+.DS_Store
+Thumbs.db
+
+# ------------------------------
+# Jupyter
+# ------------------------------
+.ipynb_checkpoints/
+
+# ------------------------------
+# Power BI
+# ------------------------------
+*.pbix.autosave
+
+# ------------------------------
+# Testing
+# ------------------------------
+.coverage
+htmlcov/
+.pytest_cache/
+
+# ------------------------------
+# Build / Distribution
+# ------------------------------
+build/
+dist/
+*.egg-info/
