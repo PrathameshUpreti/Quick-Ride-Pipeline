@@ -28,7 +28,7 @@ jobs:
         run: |
           mkdir -p ~/.dbt
           echo "
-          quickride:
+          quickride_dbt:
             target: dev
             outputs:
               dev:
