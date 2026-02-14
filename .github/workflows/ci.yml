@@ -45,9 +45,12 @@ jobs:
 
       - name: Run dbt deps
         run: dbt deps
+        working-directory: quickride_dbt
 
       - name: Run dbt build
         run: dbt build
+        working-directory: quickride_dbt
 
       - name: Run dbt source freshness
         run: dbt source freshness
+        working-directory: quickride_dbt
