@@ -1,0 +1,53 @@
+name: QuickRide Data Pipeline CI
+
+on:
+  push:
+    branches: ["dev"]
+
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  dbt-ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install dbt
+        run: |
+          pip install dbt-snowflake
+
+      - name: Create profiles.yml
+        run: |
+          mkdir -p ~/.dbt
+          echo "
+          quickride:
+            target: dev
+            outputs:
+              dev:
+                type: snowflake
+                account: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+                user: ${{ secrets.SNOWFLAKE_USER }}
+                password: ${{ secrets.SNOWFLAKE_PASSWORD }}
+                role: ${{ secrets.SNOWFLAKE_ROLE }}
+                database: ${{ secrets.SNOWFLAKE_DATABASE }}
+                warehouse: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+                schema: ${{ secrets.SNOWFLAKE_SCHEMA }}
+                threads: 4
+          " > ~/.dbt/profiles.yml
+
+      - name: Run dbt deps
+        run: dbt deps
+
+      - name: Run dbt build
+        run: dbt build
+
+      - name: Run dbt source freshness
+        run: dbt source freshness
