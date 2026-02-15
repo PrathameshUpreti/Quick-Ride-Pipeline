@@ -61,7 +61,7 @@ jobs:
         working-directory: quickride_dbt
 
       - name: Run dbt build
-        run: dbt build --select state:modified+
+        run: dbt build 
         working-directory: quickride_dbt
 
       - name: Run dbt source freshness
