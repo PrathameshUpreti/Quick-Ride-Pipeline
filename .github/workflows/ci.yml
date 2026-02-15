@@ -2,10 +2,13 @@ name: QuickRide Data Pipeline CI
 
 on:
   push:
-    branches: ["dev"]
+    branches:
+      - dev
+      - main
 
   pull_request:
-    branches: ["main"]
+    branches:
+      - main
 
 jobs:
   dbt-ci:
@@ -23,21 +26,31 @@ jobs:
       - name: Install dbt
         run: |
           pip install dbt-snowflake
+      
+      - name: Set Database Based on Branch
+        run : |
+          if [ "${{ github.ref_name }}" == "main" ]; then
+            echo "DB_NAME=QUICKRIDE_PROD" >> $GITHUB_ENV
+          else
+            echo "DB_NAME=QUICKRIDE_DEV" >> $GITHUB_ENV
+          fi
+
+        
 
       - name: Create profiles.yml
         run: |
           mkdir -p ~/.dbt
           echo "
           quickride_dbt:
-            target: dev
+            target: prod
             outputs:
-              dev:
+              prod:
                 type: snowflake
                 account: ${{ secrets.SNOWFLAKE_ACCOUNT }}
                 user: ${{ secrets.SNOWFLAKE_USER }}
                 password: ${{ secrets.SNOWFLAKE_PASSWORD }}
                 role: ${{ secrets.SNOWFLAKE_ROLE }}
-                database: ${{ secrets.SNOWFLAKE_DATABASE }}
+                database: $DB_NAME
                 warehouse: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
                 schema: ${{ secrets.SNOWFLAKE_SCHEMA }}
                 threads: 4
@@ -48,7 +61,7 @@ jobs:
         working-directory: quickride_dbt
 
       - name: Run dbt build
-        run: dbt build
+        run: dbt build --select state:modified+
         working-directory: quickride_dbt
 
       - name: Run dbt source freshness
