@@ -52,7 +52,7 @@ jobs:
                 role: ${{ secrets.SNOWFLAKE_ROLE }}
                 database: $DB_NAME
                 warehouse: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
-                schema: ${{ secrets.SNOWFLAKE_SCHEMA }}
+                schema: PUBLIC
                 threads: 4
           " > ~/.dbt/profiles.yml
 
