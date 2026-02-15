@@ -1,0 +1,88 @@
+name: QuickRide Data Pipeline CI
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  dbt-ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install dbt
+        run: |
+          pip install dbt-snowflake
+      
+      - name: Set Database Based on Branch
+        run : |
+          if [ "${{ github.ref_name }}" == "main" ]; then
+            echo "DB_NAME=QUICKRIDE_PROD" >> $GITHUB_ENV
+          else
+            echo "DB_NAME=QUICKRIDE_DEV" >> $GITHUB_ENV
+          fi   
+
+      - name: Create profiles.yml
+        run: |
+          mkdir -p ~/.dbt
+          echo "
+          quickride_dbt:
+            target: prod
+            outputs:
+              prod:
+                type: snowflake
+                account: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+                user: ${{ secrets.SNOWFLAKE_USER }}
+                password: ${{ secrets.SNOWFLAKE_PASSWORD }}
+                role: ${{ secrets.SNOWFLAKE_ROLE }}
+                database: $DB_NAME
+                warehouse: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+                schema: PUBLIC
+                threads: 4
+          " > ~/.dbt/profiles.yml
+
+      - name: Run dbt deps
+        run: dbt deps
+        working-directory: quickride_dbt
+
+      - name: Run dbt build
+        run: dbt build 
+        working-directory: quickride_dbt
+
+      - name: Run dbt source freshness
+        run: dbt source freshness
+        working-directory: quickride_dbt
+  
+  deploy:
+    needs: dbt-ci
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build Docker Image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/quickride-pipeline:latest .
+
+      - name: Push Docker Image
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/quickride-pipeline:latest
+
+      - name: Deployment Complete
+        run: echo "Production Image Successfully Deployed 🚀"

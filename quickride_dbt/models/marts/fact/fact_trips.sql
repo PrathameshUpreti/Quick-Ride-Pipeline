@@ -10,12 +10,6 @@ with trips as (
     select *
     from {{ ref('stg_trips') }}
 
-    {% if is_incremental() %}
-        where pickup_time > (
-            select max(pickup_time) from {{ this }}
-        )
-    {% endif %}
-
 )
 
 select
@@ -45,3 +39,10 @@ left join {{ ref('stg_payments') }} p
 left join {{ ref('dim_weather') }} w
        on date(t.pickup_time) = w.weather_date
       and d.city = w.city
+      
+{% if is_incremental() %}
+where date(t.pickup_time) >= (
+    select max(ft.trip_date)
+    from {{ this }} as ft
+)
+{% endif %}

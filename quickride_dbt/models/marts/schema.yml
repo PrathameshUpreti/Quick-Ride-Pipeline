@@ -45,14 +45,16 @@ models:
             - not_null
 
         - name: dbt_valid_from
-          test:
+          tests:
             - not_null
       
      tests:  
        - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - driver_id
-            - dbt_valid_from
+          arguments:
+            combination_of_columns:
+
+             - driver_id
+             - dbt_valid_from
 
         
 
@@ -69,9 +71,10 @@ models:
     
      tests:  
        - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - rider_id
-            - dbt_valid_from
+          arguments:
+            combination_of_columns:
+             - rider_id
+             - dbt_valid_from
 
 
 
