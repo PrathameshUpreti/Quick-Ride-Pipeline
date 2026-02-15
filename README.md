@@ -1,6 +1,6 @@
 # 🚗 QuickRide: Production-Grade Data Platform with Automated Ingestion
 
-> End-to-end data engineering platform with real-time ingestion using AWS, Snowpipe, Snowflake, dbt, and Airflow
+> End-to-end data engineering platform with real-time ingestion using AWS, Snowpipe, Snowflake, dbt,  Airflow and CI/CD
 
 [![AWS](https://img.shields.io/badge/AWS-232F3E?style=flat&logo=amazon-aws&logoColor=white)]()
 [![Snowflake](https://img.shields.io/badge/Snowflake-29B5E8?style=flat&logo=snowflake&logoColor=white)]()
