@@ -5,3 +5,4 @@ USER airflow
 
 RUN pip install dbt-core dbt-snowflake
 
+
