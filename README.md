@@ -1,4 +1,4 @@
-# 🚗 QuickRide: Production-Grade Data Platform with Automated Ingestion
+# 🚗 QuickRide: Production-Grade Data Platform with Automated Ingestions
 
 > End-to-end data engineering platform with real-time ingestion using AWS, Snowpipe, Snowflake, dbt,  Airflow and CI/CD
 
